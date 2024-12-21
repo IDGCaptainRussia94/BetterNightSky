@@ -1,0 +1,25 @@
+Configs: {
+	NightConfig: {
+		DisplayName: Night Sky Config
+
+		StarCount: {
+			Label: Star Count
+			Tooltip: Number of stars in the sky, a reload is required to change this
+		}
+
+		MoonScale: {
+			Label: Moon Scale
+			Tooltip: Scales the size of the realistic moon
+		}
+
+		AetherStarVelocity: {
+			Label: Aether Star Velocity
+			Tooltip: Scales the speed of the Aether Stars
+		}
+
+		AetherStarOffset: {
+			Label: Aether Star (Camera Offset)
+			Tooltip: Scales X offset of the Aether stars based off the Camera position.
+		}
+	}
+}

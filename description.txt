@@ -1,3 +1,11 @@
+A modern port/Continuation of Trivaxy's Better Night Sky from 1.3 for 1.4.4. Adds a high-def moon, extra celestial bodies, and colorful stars to the skies of your world, as well as flowing stars to the mystical aether! Includes Config options.
+
+Includes some built-in Support for Realistic Skies, running both is suggested but not required!
+
+Under MIT, github source is here: https://github.com/IDGCaptainRussia94/BetterNightSky
+
+~~Original discription~~:
+
 This little mod simply makes your nighttime skies look a little nicer.
 
 Future updates will add different mods and perhaps more star variety.
