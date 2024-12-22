@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json.Linq;
+using Terraria.Utilities;
 
 namespace BetterNightSky
 {
@@ -28,6 +29,9 @@ namespace BetterNightSky
 		}
         public static void DoUpdates()
         {
+			UnifiedRandom rando = new UnifiedRandom(Main.worldName.GetHashCode());
+			bool hasRotation = false;
+
 			foreach (KeyValuePair<CelestialObject, int> pair in BetterNightSky.CelestialIndex)
 			{
 				switch(pair.Key)
@@ -49,23 +53,28 @@ namespace BetterNightSky
 						break;
 
 					case CelestialObject.CrabNebula:
-						Main.star[pair.Value].position = CelestialAlignment(new Vector2(1660, 370));
+						hasRotation = true;
+                        Main.star[pair.Value].position = CelestialAlignment(new Vector2(1660, 370));
 						break;
 
 					case CelestialObject.Andromeda:
-						Main.star[pair.Value].position = CelestialAlignment(new Vector2(500, 250));
+                        hasRotation = true;
+                        Main.star[pair.Value].position = CelestialAlignment(new Vector2(500, 250));
 						break;
 
 					case CelestialObject.CatsEyeNebula:
-						Main.star[pair.Value].position = CelestialAlignment(new Vector2(1300, 530));
+                        hasRotation = true;
+                        Main.star[pair.Value].position = CelestialAlignment(new Vector2(1300, 530));
 						break;
 
 					case CelestialObject.CarinaNebula:
-						Main.star[pair.Value].position = CelestialAlignment(new Vector2(360, 530));
+                        hasRotation = true;
+                        Main.star[pair.Value].position = CelestialAlignment(new Vector2(360, 530));
 						break;
 
 					case CelestialObject.Triangulum:
-						Main.star[pair.Value].position = CelestialAlignment(new Vector2(1700, 700));
+                        hasRotation = true;
+                        Main.star[pair.Value].position = CelestialAlignment(new Vector2(1700, 700));
 						break;
 
 					case CelestialObject.Uranus:
@@ -73,28 +82,31 @@ namespace BetterNightSky
 						break;
 
 					case CelestialObject.LargeMagellanicCloud:
-						Main.star[pair.Value].position = CelestialAlignment(new Vector2(1400, 190));
+                        hasRotation = true;
+                        Main.star[pair.Value].position = CelestialAlignment(new Vector2(1400, 190));
 						break;
 
 					case CelestialObject.SmallMagellanicCloud:
-						Main.star[pair.Value].position = CelestialAlignment(new Vector2(950, 230));
+                        hasRotation = true;
+                        Main.star[pair.Value].position = CelestialAlignment(new Vector2(950, 230));
 						break;
 
 					case CelestialObject.HelixNebula:
-						Main.star[pair.Value].position = CelestialAlignment(new Vector2(920, 450));
+                        hasRotation = true;
+                        Main.star[pair.Value].position = CelestialAlignment(new Vector2(920, 450));
                         break;
                 }
 
+				bool inAetherNebula = hasRotation && Main.shimmerAlpha > 0;
 
                 Main.star[pair.Value].type = (int)pair.Key;
-                Main.star[pair.Value].rotation = 0;
+				Main.star[pair.Value].rotation = inAetherNebula ? (rando.NextFloat(-1f,1f)*0.01f* Main.GlobalTimeWrappedHourly)+rando.NextFloat(MathHelper.TwoPi) : 0f;
 				Main.star[pair.Value].scale = 1f;
-				Main.star[pair.Value].twinkleSpeed = 0;
+				Main.star[pair.Value].twinkleSpeed = hasRotation ? 5f : 0f;
                 Main.star[pair.Value].twinkle = 1f;
-                Main.star[pair.Value].fadeIn = 0f;
+                Main.star[pair.Value].fadeIn = inAetherNebula ? 0.5f : 0f;
                 Main.star[pair.Value].hidden = false;
                 Main.star[pair.Value].falling = false;
-
             }
 		}
 	}

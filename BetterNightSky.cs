@@ -13,6 +13,7 @@ using Mono.Cecil.Cil;
 using System.Net.Http.Headers;
 using System.Reflection;
 using static Terraria.Main;
+using Terraria.WorldBuilding;
 
 namespace BetterNightSky
 {
@@ -35,6 +36,8 @@ namespace BetterNightSky
 		public static Dictionary<CelestialObject, int> CelestialIndex = new Dictionary<CelestialObject, int>();
 		public static int NewArraySize = 21;
 		public static int NewStarCount = 1200;
+        public static int ConfigStarCount = 1200;
+        public static int drawStarPhase = 0;
 
         public static Mod realisticSkies;
 
@@ -67,17 +70,22 @@ namespace BetterNightSky
 			if (load)
 			{
                 On_Star.Fall += On_Star_Fall;
+                On_Star.Update += On_Star_Update;
                 On_Main.DrawStar += On_Main_DrawStar;
                 On_Main.DoUpdate += On_Main_DoUpdate;
                 On_Main.DrawStarsInBackground += On_Main_DrawStarsInBackground;
+                On_Main.DrawStarsInForeground += On_Main_DrawStarsInForeground;
                 IL_Star.SpawnStars += IL_Star_SpawnStars;
                 IL_Main.DrawStar += IL_Main_DrawStar;
                 IL_Main.DrawSunAndMoon += ScaleMoonSizePatch;
                 return;
 			}
             On_Star.Fall -= On_Star_Fall;
+            On_Star.Update -= On_Star_Update;
             On_Main.DrawStar -= On_Main_DrawStar;
             On_Main.DoUpdate -= On_Main_DoUpdate;
+            On_Main.DrawStarsInBackground -= On_Main_DrawStarsInBackground;
+            On_Main.DrawStarsInForeground -= On_Main_DrawStarsInForeground;
             IL_Star.SpawnStars -= IL_Star_SpawnStars;
             IL_Main.DrawStar -= IL_Main_DrawStar;
             IL_Main.DrawSunAndMoon -= ScaleMoonSizePatch;
@@ -89,16 +97,43 @@ namespace BetterNightSky
             orig(self, ref gameTime);
         }
 
-        private static void On_Main_DrawStarsInBackground(On_Main.orig_DrawStarsInBackground orig, Main self, Main.SceneArea sceneArea, bool artificial)
+        private static void On_Main_DrawStarsInForeground(On_Main.orig_DrawStarsInForeground orig, Main self, SceneArea sceneArea) => DrawForgroundStars(orig, self, sceneArea);
+        private static void DrawForgroundStars(On_Main.orig_DrawStarsInForeground orig, Main self, SceneArea sceneArea)
         {
-            CountStars();
-            orig(self,sceneArea,artificial);
+            orig(self, sceneArea);
+            return;
+
+            //Proto-type foreground stars
+
+            MethodInfo drawStarsInBG = typeof(Main).GetMethod("DrawStarsInBackground",UniversalBindingFlags);
+            drawStarPhase = 2;
+            drawStarsInBG.Invoke(self, new object[] { sceneArea, true });
         }
+
+        private static void On_Main_DrawStarsInBackground(On_Main.orig_DrawStarsInBackground orig, Main self, Main.SceneArea sceneArea, bool artificial) => DrawStarsInBackground(orig, self, sceneArea, artificial);
+        private static void DrawStarsInBackground(On_Main.orig_DrawStarsInBackground orig, Main self, Main.SceneArea sceneArea, bool artificial)
+        {
+            if (drawStarPhase == 2)
+            {
+                CountStars();
+                orig(self, sceneArea, artificial);
+                drawStarPhase = 0;
+                return;
+            }
+
+            CountStars();
+
+            drawStarPhase = 0;
+            orig(self, sceneArea, artificial);
+            drawStarPhase = 1;
+            orig(self, sceneArea, artificial);
+        }
+
 		public static void CountStars() => starIndex = 0;
 
         private static void On_Main_DrawStar(On_Main.orig_DrawStar orig, Main self, ref Main.SceneArea sceneArea, float starOpacity, Color bgColorForStars, int i, Star theStar, bool artificial, bool foreground)
         {
-            ChangeDrawStar(orig,self, ref sceneArea,starOpacity,bgColorForStars,i,theStar,artificial,foreground);
+            ChangeDrawStar(orig,self, ref sceneArea,starOpacity,bgColorForStars,i,theStar,artificial,foreground, drawStarPhase == 1);
         }
 
         private static void On_Star_Fall(On_Star.orig_Fall orig, Star self) => StarFallCheck(orig, self);
@@ -108,8 +143,45 @@ namespace BetterNightSky
                 orig(self);
         }
 
-        public static void ChangeDrawStar(On_Main.orig_DrawStar orig, Main self, ref Main.SceneArea sceneArea, float starOpacity, Color bgColorForStars, int i, Star theStar, bool artificial, bool foreground)
+        private static void On_Star_Update(On_Star.orig_Update orig, Star self) => StarUpdate(orig, self);
+        private static void StarUpdate(On_Star.orig_Update orig, Star self)
         {
+            if (!SpecialStarType(self))
+            orig(self);
+        }
+
+        public static void ChangeDrawStar(On_Main.orig_DrawStar orig, Main self, ref Main.SceneArea sceneArea, float starOpacity, Color bgColorForStars, int i, Star theStar, bool artificial, bool foreground, bool drawSpecialStars)
+        {
+            bool uniqueStar = SpecialStarType(theStar);
+            bool drawStar = true;
+
+            if (drawSpecialStars)
+            {
+                if (!uniqueStar || drawStarPhase == 2)
+                    return;
+            }
+            else 
+            {
+                if (uniqueStar)
+                    return;
+
+                if ((uniqueStar && artificial) || (!uniqueStar && ConfigStarCount < starIndex))
+                {
+                    return;
+                }
+
+                //Proto-type forground stars
+
+                /*int starCheck = ((ConfigStarCount - 250) - starIndex);
+                bool forground = (drawStarPhase == 2 && starCheck > 0);
+                bool background = (drawStarPhase == 0 && starCheck > 0);
+                if ((theStar.falling && drawStarPhase == 2) || (forground))
+                {
+                    return;
+                    drawStar = false;
+                }*/
+            }
+
             int bgTopY = sceneArea.bgTopY;
 
             if (!artificial && realisticSkies != null)
@@ -117,15 +189,13 @@ namespace BetterNightSky
                 sceneArea.bgTopY = 0;
             }
 
-            bool uniqueStar = SpecialStarType(theStar);
-
-            if (!uniqueStar || !artificial)
+            if (drawStar)
             {
-                //if (uniqueStar || NightConfig.Config.StarCount < starIndex)
-                    orig(self, ref sceneArea, starOpacity, bgColorForStars, i, theStar, artificial, foreground);
+                orig(self, ref sceneArea, starOpacity, bgColorForStars, i, theStar, artificial, foreground);
+                starIndex++;
             }
+
             sceneArea.bgTopY = bgTopY;
-            starIndex++;
         }
 
         private delegate bool AdjustYPositionOfStarDelegate(Star theStar,bool artifical, ref Main.SceneArea sceneArea, ref Vector2 starY);
@@ -135,18 +205,35 @@ namespace BetterNightSky
         }
 		public static bool AdjustYPositionOfStarMethodLocal(Star theStar, bool artifical, ref Main.SceneArea sceneArea, ref Vector2 starY)
 		{
-			//Main.NewText(theStar.type);
 			if (SpecialStarType(theStar))
 			{
-				return true;
+                if (artifical)
+                {
+                    if (!NightConfig.Config.AetherCelestialBodies)
+                        return true;
+
+                    UnifiedRandom rando = new UnifiedRandom((theStar.position+Main.worldName).GetHashCode());
+
+                    float addVel = (Main.screenPosition.X * -(theStar.twinkleSpeed>4 ? 0.025f : rando.NextFloat(0.028f, 0.04f)));
+                    starY += new Vector2(rando.NextFloat(0, 1921) + addVel, rando.NextFloat(0, 1081));
+                    starY.X = -200+((starY.X+9000)% 2321);
+                    starY.Y = -100+((starY.Y+9000) % 1281);
+                }
+
+                return true;
 			}
 			else
 			{
 				if (artifical && !theStar.falling)
 				{
+                    //int starCheck = (ConfigStarCount - starIndex) - 50;
+                    bool forground = (drawStarPhase == 2);
+                    bool background = (drawStarPhase == 0);
+
+                    float scaleTime = forground ? 4f : 1f;
                     //UnifiedRandom rando = new UnifiedRandom(theStar.position.GetHashCode());
-                    starY += starVelocityForAether[starIndex] * Main.GlobalTimeWrappedHourly * NightConfig.Config.AetherStarVelocity;
-                    starY.X += (Main.screenPosition.X * -((starIndex / 4000f) + 0.025f))*NightConfig.Config.AetherStarOffset;
+                    starY += starVelocityForAether[starIndex] * Main.GlobalTimeWrappedHourly * NightConfig.Config.AetherStarVelocity* scaleTime;
+                    starY.X += (Main.screenPosition.X * -((starIndex / 4000f) + 0.025f))* scaleTime * NightConfig.Config.AetherStarOffset;
                     starY.X %= 1921;
                     starY.Y %= 1081;
 
@@ -237,7 +324,6 @@ namespace BetterNightSky
             FieldInfo starsInfo = typeof(Main).GetField("starsHit", UniversalBindingFlags);
             FieldInfo dayTime = typeof(Main).GetField("dayTime", UniversalBindingFlags);
 
-
             if (c.TryGotoNext(MoveType.After, i => i.MatchStsfld(starsInfo)))
             {
                 ILLabel endBranch = default;
@@ -259,7 +345,8 @@ namespace BetterNightSky
 
             public static void SpawnNewStars()
             {
-                //NewStarCount = Math.Max(NightConfig.Config.StarCount, 500);
+                ConfigStarCount = NightConfig.StarCount;
+                NewStarCount = Math.Max(ConfigStarCount, 1200);
                 Array.Resize<Star>(ref Main.star, NewStarCount);
                 Array.Resize<Vector2>(ref starVelocityForAether, NewStarCount);
 

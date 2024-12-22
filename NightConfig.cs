@@ -13,16 +13,20 @@ namespace BetterNightSky
 {
     public class NightConfig : ModConfig
     {
+        public static int StarCount => 1200;
         public static NightConfig Config;
      
+        //Still running into Array issues... I should redo the whole idea to correct this problem
+
         /*
         [ReloadRequired]
         [DefaultValue(1200)]
-        [Range(500, 3000)]
+        [Range(1200, 3000)]
         [Increment(25)]
         [DrawTicks]
         public int StarCount;
         */
+        
 
         [DefaultValue(1f)]
         [Range(0f, 5f)]
@@ -42,12 +46,15 @@ namespace BetterNightSky
         [DrawTicks]
         public float AetherStarOffset;
 
+        [DefaultValue(true)]
+        public bool AetherCelestialBodies;
+
         public override ConfigScope Mode => ConfigScope.ClientSide;
 
         public override bool Equals(object obj)
         {
             if (obj is NightConfig other)
-                return AetherStarOffset == other.AetherStarOffset && AetherStarVelocity == other.AetherStarVelocity && MoonScale == other.MoonScale;
+                return AetherStarOffset == other.AetherStarOffset && AetherStarVelocity == other.AetherStarVelocity && MoonScale == other.MoonScale && AetherCelestialBodies == other.AetherCelestialBodies;
             return base.Equals(obj);
         }
 

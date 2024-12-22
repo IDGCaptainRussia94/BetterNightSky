@@ -21,5 +21,10 @@ Configs: {
 			Label: Aether Star (Camera Offset)
 			Tooltip: Scales X offset of the Aether stars based off the Camera position.
 		}
+
+		AetherCelestialBodies: {
+			Label: Aether Celestial Bodies
+			Tooltip: Whether planets and nebulas show up in the Aether
+		}
 	}
 }

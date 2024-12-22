@@ -1,5 +1,5 @@
 author = IDGCaptainRussia, Trivaxy
-version = 1.0
+version = 1.1
 displayName = IDG's Better Night Sky
 buildIgnore = .vs\*, .git\*, ignore\*, .gitignore, .gitattributes, .zip, Effects\fxcompiler,*.exe,*.zip,*.gif, *.xcf, *.idg, *.MD, *.csproj, *.user, obj\*, bin\*, vs\*, git\*
 includePDB = true
