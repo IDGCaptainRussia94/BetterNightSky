@@ -99,8 +99,8 @@ namespace BetterNightSky
 
 				bool aether = Main.shimmerAlpha > 0;
                 bool inAetherNebula = hasRotation && aether;
-				float fadeTransitionLength = Main.maxTilesY* (NightConfig.Config?.CelestialBodies.altitudeFadingPercent ?? 1f);
-				float altitudeHeightPercent = NightConfig.Config?.CelestialBodies.AltitudeHeight ?? 0.10f;
+				float fadeTransitionLength = Main.maxTilesY* (NightConfig.Config?.CelestialBodies?.altitudeFadingPercent ?? 1f);
+				float altitudeHeightPercent = NightConfig.Config?.CelestialBodies?.AltitudeHeight ?? 0.10f;
 
 
                 float altitudeFading = 1f-MathHelper.Clamp(((((int)(Main.maxTilesY*altitudeHeightPercent)) << 4)-Main.screenPosition.Y) /fadeTransitionLength, 0f,1f);
