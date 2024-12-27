@@ -26,5 +26,97 @@ Configs: {
 			Label: Aether Celestial Bodies
 			Tooltip: Whether planets and nebulas show up in the Aether
 		}
+
+		CelestialBodies: {
+			Label: Celestial Bodies
+			Tooltip: Adjusts which bodies are visible in the sky
+		}
+	}
+
+	NightConfigCelestialBodies: {
+		DisplayName: Celestial Bodies
+		HeaderVisibility: Celestial Body Visibility
+
+		AltitudeHeight: {
+			Label: Altitude Height
+			Tooltip:
+				'''
+				This is a percentage of your world height that the celestial bodies will fade out at.
+				ideally use a low value like 0.10 or 0.15 to make it fade in at space-height, a value above 0.3 will be below ground.
+				This does not affect the Aether biome.
+				'''
+		}
+
+		altitudeFadingPercent: {
+			Label: Altitude Fading Percent
+			Tooltip: This is a percentage of your world height that is used to fade the celestial bodies in and out.
+		}
+
+		CelestialBodyOn8: {
+			Label: Mars
+			Tooltip: ""
+		}
+
+		CelestialBodyOn9: {
+			Label: Saturn
+			Tooltip: ""
+		}
+
+		CelestialBodyOn10: {
+			Label: Jupiter
+			Tooltip: ""
+		}
+
+		CelestialBodyOn11: {
+			Label: Mercury
+			Tooltip: ""
+		}
+
+		CelestialBodyOn12: {
+			Label: Crab Nebula
+			Tooltip: ""
+		}
+
+		CelestialBodyOn13: {
+			Label: Andromeda
+			Tooltip: ""
+		}
+
+		CelestialBodyOn14: {
+			Label: Cats Eye Nebula
+			Tooltip: ""
+		}
+
+		CelestialBodyOn15: {
+			Label: Carina Nebula
+			Tooltip: ""
+		}
+
+		CelestialBodyOn16: {
+			Label: Triangulum
+			Tooltip: ""
+		}
+
+		CelestialBodyOn17: {
+			Label: Large Magellanic Cloud
+			Tooltip: ""
+		}
+
+		CelestialBodyOn18: {
+			Label: Small Magellanic Cloud
+			Tooltip: ""
+		}
+
+		CelestialBodyOn19: {
+			Label: HelixNebula
+			Tooltip: ""
+		}
+
+		CelestialBodyOn20: {
+			Label: Uranus
+			Tooltip: ""
+		}
+
+		Tooltip: ""
 	}
 }

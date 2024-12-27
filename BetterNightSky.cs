@@ -91,6 +91,9 @@ namespace BetterNightSky
             IL_Main.DrawSunAndMoon -= ScaleMoonSizePatch;
         }
 
+        public static bool CanDrawSpecialStar(Star theStar) => NightConfigCelestialBodies.celestialBodyBools[theStar.type];
+
+
         private static void On_Main_DoUpdate(On_Main.orig_DoUpdate orig, Main self, ref GameTime gameTime)
         {
             NightWorld.DoUpdates();
@@ -157,7 +160,7 @@ namespace BetterNightSky
 
             if (drawSpecialStars)
             {
-                if (!uniqueStar || drawStarPhase == 2)
+                if (!uniqueStar || drawStarPhase == 2 || !CanDrawSpecialStar(theStar))
                     return;
             }
             else 

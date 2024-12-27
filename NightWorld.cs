@@ -97,14 +97,20 @@ namespace BetterNightSky
                         break;
                 }
 
-				bool inAetherNebula = hasRotation && Main.shimmerAlpha > 0;
+				bool aether = Main.shimmerAlpha > 0;
+                bool inAetherNebula = hasRotation && aether;
+				float fadeTransitionLength = Main.maxTilesY* (NightConfig.Config?.CelestialBodies.altitudeFadingPercent ?? 1f);
+				float altitudeHeightPercent = NightConfig.Config?.CelestialBodies.AltitudeHeight ?? 0.10f;
+
+
+                float altitudeFading = 1f-MathHelper.Clamp(((((int)(Main.maxTilesY*altitudeHeightPercent)) << 4)-Main.screenPosition.Y) /fadeTransitionLength, 0f,1f);
 
                 Main.star[pair.Value].type = (int)pair.Key;
 				Main.star[pair.Value].rotation = inAetherNebula ? (rando.NextFloat(-1f,1f)*0.01f* Main.GlobalTimeWrappedHourly)+rando.NextFloat(MathHelper.TwoPi) : 0f;
 				Main.star[pair.Value].scale = 1f;
 				Main.star[pair.Value].twinkleSpeed = hasRotation ? 5f : 0f;
                 Main.star[pair.Value].twinkle = 1f;
-                Main.star[pair.Value].fadeIn = inAetherNebula ? 0.5f : 0f;
+                Main.star[pair.Value].fadeIn = inAetherNebula ? 0.5f : (aether || Main.gameMenu ? 0f : altitudeFading);
                 Main.star[pair.Value].hidden = false;
                 Main.star[pair.Value].falling = false;
             }
