@@ -124,7 +124,6 @@ namespace BetterNightSky
 
         public void OnUpdate()
         {
-            Main.NewText("updated!");
             int index = 8;
             foreach (FieldInfo field in typeof(NightConfigCelestialBodies).GetFields())
             {
