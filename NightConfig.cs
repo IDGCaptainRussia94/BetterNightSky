@@ -130,7 +130,6 @@ namespace BetterNightSky
                 if (field.FieldType == typeof(bool))
                 {
                     celestialBodyBools[index] = (bool)field.GetValue(this);
-                    Main.NewText(celestialBodyBools[index]);
                     index++;
                 }
             }
