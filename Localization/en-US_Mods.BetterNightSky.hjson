@@ -7,9 +7,14 @@ Configs: {
 			Tooltip: Number of stars in the sky, a reload is required to change this
 		}
 
+		UseHighResMoon: {
+			Label: High-Res Moon
+			Tooltip: Use realistic moon or not.
+		}
+
 		MoonScale: {
 			Label: Moon Scale
-			Tooltip: Scales the size of the realistic moon
+			Tooltip: Scales the size of the moon (includes both vanilla and realistic)
 		}
 
 		AetherStarVelocity: {

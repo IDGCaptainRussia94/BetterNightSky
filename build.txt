@@ -1,5 +1,5 @@
 author = IDGCaptainRussia, Trivaxy
-version = 1.22
+version = 1.24
 displayName = IDG's Better Night Sky
 buildIgnore = .vs\*, .git\*, ignore\*, .gitignore, .gitattributes, .zip, Effects\fxcompiler,*.exe,*.zip,*.gif, *.xcf, *.idg, *.MD, *.csproj, *.user, obj\*, bin\*, vs\*, git\*
 includePDB = true
@@ -7,3 +7,4 @@ hideCode = false
 homepage = https://github.com/IDGCaptainRussia94/BetterNightSky
 hideResources = false
 includeSource = true
+side = Client

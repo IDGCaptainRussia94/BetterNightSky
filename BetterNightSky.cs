@@ -208,37 +208,37 @@ namespace BetterNightSky
         }
 		public static bool AdjustYPositionOfStarMethodLocal(Star theStar, bool artifical, ref Main.SceneArea sceneArea, ref Vector2 starY)
 		{
-			if (SpecialStarType(theStar))
-			{
+            if (SpecialStarType(theStar))
+            {
                 if (artifical)
                 {
                     if (!NightConfig.Config.AetherCelestialBodies)
                         return true;
 
-                    UnifiedRandom rando = new UnifiedRandom((theStar.position+Main.worldName).GetHashCode());
+                    UnifiedRandom rando = new UnifiedRandom((theStar.position + Main.worldName).GetHashCode());
 
-                    float addVel = (Main.screenPosition.X * -(theStar.twinkleSpeed>4 ? 0.025f : rando.NextFloat(0.028f, 0.04f)));
+                    float addVel = (Main.screenPosition.X * -(theStar.twinkleSpeed > 4 ? 0.025f : rando.NextFloat(0.028f, 0.04f)));
                     starY += new Vector2(rando.NextFloat(0, 1921) + addVel, rando.NextFloat(0, 1081));
-                    starY.X = -200+((starY.X+9000)% 2321);
-                    starY.Y = -100+((starY.Y+9000) % 1281);
+                    starY.X = -200 + ((starY.X + 9000) % (Main.screenWidth + 401));
+                    starY.Y = -100 + ((starY.Y + 9000) % (Main.screenHeight + 201));
                 }
 
                 return true;
-			}
-			else
-			{
-				if (artifical && !theStar.falling)
-				{
+            }
+            else
+            {
+                if (artifical && !theStar.falling)
+                {
                     //int starCheck = (ConfigStarCount - starIndex) - 50;
                     bool forground = (drawStarPhase == 2);
                     bool background = (drawStarPhase == 0);
 
                     float scaleTime = forground ? 4f : 1f;
                     //UnifiedRandom rando = new UnifiedRandom(theStar.position.GetHashCode());
-                    starY += starVelocityForAether[starIndex] * Main.GlobalTimeWrappedHourly * NightConfig.Config.AetherStarVelocity* scaleTime;
-                    starY.X += (Main.screenPosition.X * -((starIndex / 4000f) + 0.025f))* scaleTime * NightConfig.Config.AetherStarOffset;
-                    starY.X %= 1921;
-                    starY.Y %= 1081;
+                    starY += starVelocityForAether[starIndex] * Main.GlobalTimeWrappedHourly * NightConfig.Config.AetherStarVelocity * scaleTime;
+                    starY.X += (Main.screenPosition.X * -((starIndex / 4000f) + 0.025f)) * scaleTime * NightConfig.Config.AetherStarOffset;
+                    starY.X %= (Main.screenWidth + 1);
+                    starY.Y %= (Main.screenHeight + 1);
 
                 }
             }
@@ -385,15 +385,19 @@ namespace BetterNightSky
 
 					SpawnNewStars();
 
+
 					for (int i = 0; i < Terraria.GameContent.TextureAssets.Star.Length; i++)
 					{
 						StarTexturesReference[i] = ModContent.Request<Texture2D>("BetterNightSky/Textures/Star_" + i);
 					}
 
-					for (int i = 0; i < MoonTexturesReference.Length; i++)
-					{
-						MoonTexturesReference[i] = ModContent.Request<Texture2D>("BetterNightSky/Textures/Moon1");
-					}
+                    if (NightConfig.Config.UseHighResMoon)
+                    {
+                        for (int i = 0; i < MoonTexturesReference.Length; i++)
+                        {
+                            MoonTexturesReference[i] = ModContent.Request<Texture2D>("BetterNightSky/Textures/Moon1");
+                        }
+                    }
 
 					int startIndex = NewStarCount;
 

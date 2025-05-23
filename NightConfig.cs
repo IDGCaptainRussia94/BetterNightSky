@@ -15,6 +15,8 @@ namespace BetterNightSky
 {
     public class NightConfig : ModConfig
     {
+        public override ConfigScope Mode => ConfigScope.ClientSide;
+
         public static int StarCount => 1200;
         public static NightConfig Config;
 
@@ -29,6 +31,9 @@ namespace BetterNightSky
         public int StarCount;
         */
 
+        [ReloadRequired]
+        [DefaultValue(true)]
+        public bool UseHighResMoon;
 
         [DefaultValue(1f)]
         [Range(0f, 5f)]
@@ -53,12 +58,10 @@ namespace BetterNightSky
 
         public NightConfigCelestialBodies CelestialBodies;
 
-        public override ConfigScope Mode => ConfigScope.ClientSide;
-
         public override bool Equals(object obj)
         {
             if (obj is NightConfig other)
-                return AetherStarOffset == other.AetherStarOffset && AetherStarVelocity == other.AetherStarVelocity && MoonScale == other.MoonScale && AetherCelestialBodies == other.AetherCelestialBodies;
+                return AetherStarOffset == other.AetherStarOffset && AetherStarVelocity == other.AetherStarVelocity && MoonScale == other.MoonScale && AetherCelestialBodies == other.AetherCelestialBodies && UseHighResMoon == other.UseHighResMoon;
             return base.Equals(obj);
         }
 
